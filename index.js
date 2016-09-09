@@ -5,6 +5,7 @@ var get = require('simple-get')
 var mdns = require('multicast-dns')
 var mime = require('mime')
 var parseString = require('xml2js').parseString
+var subtitles_style
 
 var SSDP
 try {
@@ -159,7 +160,10 @@ module.exports = function () {
         }
 
         p.load(media, playerOptions, cb)
+
       })
+
+      subtitles_style = opts.textTrackStyle
     }
 
     player.resume = function (cb) {
@@ -216,6 +220,28 @@ module.exports = function () {
         }, cb)
       })
     }
+
+    player.changeSubtitlesSize = function(data, cb) {
+      if (!cb) cb = noop
+      connect(function (err, p) {
+        if (err) return cb(err)
+        player.request({
+          type: 'EDIT_TRACKS_INFO',
+          textTrackStyle: data
+        }, cb)
+      })
+    };
+
+    player.changeSubtitlesColor = function(data, cb) {
+      if (!cb) cb = noop
+      connect(function (err, p) {
+        if (err) return cb(err)
+        player.request({
+          type: 'EDIT_TRACKS_INFO',
+          textTrackStyle: data
+        }, cb)
+      })
+    };
 
     player.request = function (data, cb) {
       if (!cb) cb = noop
